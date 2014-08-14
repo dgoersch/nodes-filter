@@ -2,28 +2,27 @@
 /////////////////////////////////////////////////////////////////////////
 //  nodes_filter.php                                                   //
 //  filter nodes.json to match given part of the names                 //
-//  to present all nodes of a cummunity on the ff-map                  //
+//  to present all nodes of a community on the ffmap                   //
 //  by Domnique Görsch <ff@dgoersch.info>                              //
 //                                                                     //
-//  Dieses Material steht unter der Creative-Commons-Lizenz            //
-//  "Namensnennung - Nicht-kommerziell - Weitergabe unter gleichen     //
-//  Bedingungen 4.0 International".                                    //
-//  Um eine Kopie dieser Lizenz zu sehen, besuchen Sie                 //
+//  This work is licensed under the Creative Commons                   //
+//  Attribution-NonCommercial-ShareAlike 4.0 International License.    //
+//  To view a copy of this license, visit                              //
 //  http://creativecommons.org/licenses/by-nc-sa/4.0/.                 //
 /////////////////////////////////////////////////////////////////////////
 
 error_reporting(E_ALL ^ E_NOTICE);                                                           // suppress notices
 
-$src_url    = "http://map.freifunk-ruhrgebiet.de/nodes.json";                                // source for nodes.json
+$src_url    = "http://map.freifunk-ruhrgebiet.de/nodes.json";                                // source url for nodes.json
 $json_file  = "/var/customers/webs/ffmg/map/nodes.json";                                     // target file
-
-$src_json   = file_get_contents($src_url);                                                   // get nodes from ruhrgebiet
-$src_arr    = json_decode($src_json,TRUE);                                                   // and convert to array
 $filter_str = "FF-MG-";                                                                      // filterstring
 
+$src_json   = file_get_contents($src_url);                                                   // get nodes.json from source url
+$src_arr    = json_decode($src_json,TRUE);                                                   // and convert to array
 
 $ids_arr  = array();
 $macs_arr = array();
+
 foreach($src_arr['nodes'] as $node_arr) {                                                    // run through nodes
   $node = new stdClass();
   $node = json_decode(json_encode($node_arr), FALSE);
@@ -58,6 +57,7 @@ foreach($src_arr['nodes'] as $node_arr) {                                       
 }
 
 $links_arr = array();
+
 foreach($src_arr['links'] as $link_arr) {                                                    // run through links
   $link = new stdClass();
   $link = json_decode(json_encode($link_arr), FALSE);
@@ -73,7 +73,6 @@ $output_arr = array("nodes" => $nodes_arr,"meta" => $src_arr['meta'],"links" => 
 //echo json_encode($output_arr,JSON_UNESCAPED_SLASHES);                                        // print output as json object
 
 file_put_contents($json_file,json_encode($output_arr,JSON_UNESCAPED_SLASHES));               // output as json object to nodes.json
-
 
 // strpos() replacement with array as needles
 // from http://php.net/manual/de/function.strpos.php
